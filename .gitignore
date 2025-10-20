@@ -1,0 +1,14 @@
+# Dependencias
+/backend/node_modules
+/frontend/node_modules
+
+# Archivos de entorno 
+.env
+/backend/.env
+/frontend/.env
+
+# Archivos de build de Vite 
+/frontend/dist
+
+# Logs
+npm-debug.log
