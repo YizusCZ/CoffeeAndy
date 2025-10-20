@@ -44,7 +44,7 @@ function AdminRoute({ children }) {
 
     if (!isAdmin) {
         // Si estas logueado pero NO es admin, a tu perfil (por ahorita)
-        return <Navigate to="/profile" replace />;
+        return <Navigate to="/menu" replace />;
     }
 
     return children;

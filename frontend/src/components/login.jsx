@@ -36,12 +36,12 @@ function Login() {
         {/* Logos */}
         <div className="flex items-center justify-between gap-4 mb-8 sm:mb-10">
           <img
-            src={imgUG || "/placeholder.svg"}
+            src={imgUG}
             alt="Universidad de Guanajuato"
             className="h-12 sm:h-14 md:h-16 w-auto object-contain"
           />
           <img
-            src={imgCoffeeAndy || "/placeholder.svg"}
+            src={imgCoffeeAndy}
             alt="Coffee Andy"
             className="h-12 sm:h-14 md:h-16 w-auto object-contain"
           />
