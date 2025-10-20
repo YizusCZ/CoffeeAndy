@@ -57,14 +57,6 @@ CREATE TABLE IF NOT EXISTS pedidos (
     fecha_pedido DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE carrito (
-    idProducto INT NOT NULL,
-    imagen_url VARCHAR(255),
-    cantidad INT NOT NULL,
-    subtotal DECIMAL (10, 2) NOT NULL,
-    total DECIMAL (10, 2) NOT NULL
-)
-
 CREATE TABLE IF NOT EXISTS carrito (
     id INT AUTO_INCREMENT PRIMARY KEY, 
     usuario_id INT NOT NULL,           
@@ -292,9 +284,6 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-
-DROP PROCEDURE IF EXISTS sp_realizarPedido $$
-
 CREATE PROCEDURE sp_realizarPedido(
     IN p_usuario_id INT,
     IN p_nota_general TEXT
@@ -422,3 +411,4 @@ END$$
 DELIMITER ;
 
 SELECT * FROM productos;
+

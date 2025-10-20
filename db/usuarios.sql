@@ -18,3 +18,5 @@ SELECT * FROM usuarios;
 TRUNCATE auth_db.usuarios;
 
 update usuarios set rol='admin' where id=1;
+
+delete from usuarios where id = 5;

@@ -46,18 +46,18 @@ function Profile() {
         : 'url_de_imagen_por_defecto.png'; 
 
     return (
-        <div>
-            <h1>Perfil de Usuario</h1>
-            <img 
-                src={fotoUrlCompleta} 
-                alt="Foto de perfil" 
-                style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} 
-            />
-            <h2>{user.nombre_completo}</h2>
-            <p><strong>Rol:</strong> {user.rol}</p>
+        <div className="min-h-screen w-full bg-gray-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
+            <div className="w-full max-w-md bg-white flex items-center justify-center rounded-2xl shadow-lg p-6 sm:p-8 md:p-10 flex flex-col">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Perfil de Usuario</h1>
+
+                <img class="rounded-sm w-36 h-36" src={fotoUrlCompleta} alt="Extra large avatar"/> 
+
+            <h2 className="text-1xl sm:text-2xl font-bold text-gray-500 mb-2">{user.nombre_completo}</h2>
+            <p className = "text-sm sm:text-base text-gray-600"><strong>Rol:</strong> {user.rol}</p>
             
-            <button onClick={handleLogout}>Cerrar Sesión</button>
+            <button onClick={handleLogout} className='w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 sm:py-2 rounded-lg transition-colors duration-200 text-sm sm:text-base mt-4'>Cerrar Sesión</button>
         </div>
+    </div>
     );
 }
 
