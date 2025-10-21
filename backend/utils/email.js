@@ -42,7 +42,7 @@ const sendOrderReadyEmail = async (toEmail, orderId) => {
             <p>Te informamos que tu pedido con el número <strong>#${orderId}</strong> ya está listo para ser recogido en la cafetería.</p>
             <p>¡Gracias por tu compra!</p>
             <br>
-            <p>Atentamente,<br>El equipo de Coffee Andy</p>
+            <p>Atentamente,<br>Coffee Andy</p>
         `
     };
 
