@@ -9,7 +9,7 @@ router.use(adminAuth);
 // 1. OBTENER todas las categorías
 router.get('/', async (req, res) => {
     try {
-        const [categorias] = await pool.query('SELECT * FROM categorias ORDER BY nombre ASC');
+        const [categorias] = await pool.query('SELECT * FROM categoria ORDER BY nombre ASC');
         res.json(categorias);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener categorías', error });
@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
         if (!nombre) {
             return res.status(400).json({ message: 'El nombre es requerido' });
         }
-        const [result] = await pool.query('INSERT INTO categorias (nombre) VALUES (?)', [nombre]);
+        const [result] = await pool.query('INSERT INTO categoria (nombre) VALUES (?)', [nombre]);
         res.status(201).json({ id: result.insertId, nombre });
     } catch (error) {
         // 'ER_DUP_ENTRY' codigo de error para UNIQUE
@@ -42,7 +42,7 @@ router.put('/:id', async (req, res) => {
         if (!nombre) {
             return res.status(400).json({ message: 'El nombre es requerido' });
         }
-        await pool.query('UPDATE categorias SET nombre = ? WHERE id = ?', [nombre, id]);
+        await pool.query('UPDATE categoria SET nombre = ? WHERE id = ?', [nombre, id]);
         res.json({ message: 'Categoría actualizada' });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
@@ -56,12 +56,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const [productos] = await pool.query('SELECT * FROM productos WHERE categoria_id = ?', [id]);
+        const [productos] = await pool.query('SELECT * FROM producto WHERE categoria_id = ?', [id]);
         if (productos.length > 0) {
             return res.status(400).json({ message: `No se puede eliminar. ${productos.length} productos están usando esta categoría.` });
         }
         
-        await pool.query('DELETE FROM categorias WHERE id = ?', [id]);
+        await pool.query('DELETE FROM categoria WHERE id = ?', [id]);
         res.json({ message: 'Categoría eliminada' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar la categoría', error });

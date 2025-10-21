@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const adminAuth = require('../middleware/adminAuth'); 
+const {sendOrderReadyEmail} = require('../utils/email')
 
 router.use(adminAuth);
 
@@ -22,15 +23,15 @@ router.get('/queue', async (req, res) => {
                 pi.nota_cocina,
                 GROUP_CONCAT(op.nombre SEPARATOR ', ') AS opciones_elegidas
             FROM 
-                pedidos p
+                pedido p
             JOIN 
-                pedidos_items pi ON p.id = pi.pedido_id
+                pedido_item pi ON p.id = pi.pedido_id
             JOIN 
-                productos prod ON pi.producto_id = prod.id
+                producto prod ON pi.producto_id = prod.id
             LEFT JOIN 
-                pedidos_items_opciones pio ON pi.id = pio.pedido_item_id
+                pedido_item_opcion pio ON pi.id = pio.pedido_item_id
             LEFT JOIN 
-                opciones op ON pio.opcion_id = op.id
+                opcion op ON pio.opcion_id = op.id
             WHERE 
                 p.estado IN ('Recibido', 'En preparación')
             GROUP BY
@@ -56,12 +57,23 @@ router.put('/order/:id/status', async (req, res) => {
             return res.status(400).json({ message: 'Estado no válido' });
         }
 
+        if(estado == 'Listo para recoger'){
+            const[rows] = await pool.query(
+                'SELECT u.correo FROM usuario u JOIN pedido p ON u.id = p.id_usuario WHERE p.id = ?', [id]
+            );
+
+            if (rows.length > 0 && rows[0].correo) {
+                const userEmail =  rows[0].correo;
+                sendOrderReadyEmail(userEmail, id);
+            }
+        }
+
         if (estado === 'Cancelado') {
             await pool.query('CALL sp_cancelarPedido(?)', [id]);
         } else {
 
             await pool.query(
-                'UPDATE pedidos SET estado = ? WHERE id = ?',
+                'UPDATE pedido SET estado = ? WHERE id = ?',
                 [estado, id]
             );
         }

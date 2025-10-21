@@ -30,4 +30,31 @@ const sendVerificationEmail = async (toEmail, token) => {
     }
 };
 
-module.exports = sendVerificationEmail;
+
+const sendOrderReadyEmail = async (toEmail, orderId) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: toEmail,
+        subject: "¡Tu pedido está listo para recoger!",
+        html: `
+            <h1>¡Tu pedido está listo!</h1>
+            <p>Hola,</p>
+            <p>Te informamos que tu pedido con el número <strong>#${orderId}</strong> ya está listo para ser recogido en la cafetería.</p>
+            <p>¡Gracias por tu compra!</p>
+            <br>
+            <p>Atentamente,<br>El equipo de Coffee Andy</p>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Correo de pedido listo enviado a ${toEmail} para el pedido #${orderId}');
+    } catch (error) {
+        // Solo registramos el error, no queremos que esto detenga la operación principal
+        console.error('Error al enviar correo de pedido listo:', error);
+    }
+};
+
+
+module.exports = {sendVerificationEmail,
+                    sendOrderReadyEmail}

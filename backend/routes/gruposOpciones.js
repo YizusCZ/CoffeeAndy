@@ -9,8 +9,8 @@ router.use(adminAuth);
 // 1. OBTENER todos los grupos de opciones con  sus opciones valga la redundancia
 router.get('/', async (req, res) => {
     try {
-        const [grupos] = await pool.query('SELECT * FROM grupos_opciones ORDER BY nombre ASC');
-        const [opciones] = await pool.query('SELECT * FROM opciones ORDER BY nombre ASC');
+        const [grupos] = await pool.query('SELECT * FROM grupo_opcion ORDER BY nombre ASC');
+        const [opciones] = await pool.query('SELECT * FROM opcion ORDER BY nombre ASC');
         
         const gruposConOpciones = grupos.map(grupo => ({
             ...grupo,
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     try {
         const { nombre, tipo_seleccion, requerido } = req.body;
         const [result] = await pool.query(
-            'INSERT INTO grupos_opciones (nombre, tipo_seleccion, requerido) VALUES (?, ?, ?)',
+            'INSERT INTO grupo_opcion (nombre, tipo_seleccion, requerido) VALUES (?, ?, ?)',
             [nombre, tipo_seleccion || 'UNICO', requerido || false]
         );
         res.status(201).json({ id: result.insertId, ...req.body });
@@ -44,7 +44,7 @@ router.put('/:id', async (req, res) => {
         const { id } = req.params;
         const { nombre, tipo_seleccion, requerido } = req.body;
         await pool.query(
-            'UPDATE grupos_opciones SET nombre = ?, tipo_seleccion = ?, requerido = ? WHERE id = ?',
+            'UPDATE grupo_opcion SET nombre = ?, tipo_seleccion = ?, requerido = ? WHERE id = ?',
             [nombre, tipo_seleccion, requerido, id]
         );
         res.json({ message: 'Grupo actualizado' });
@@ -57,12 +57,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const [usos] = await pool.query('SELECT * FROM productos_grupos_opciones WHERE grupo_opcion_id = ?', [id]);
+        const [usos] = await pool.query('SELECT * FROM producto_grupo_opcion WHERE grupo_opcion_id = ?', [id]);
         if (usos.length > 0) {
             return res.status(400).json({ message: `No se puede eliminar. ${usos.length} productos están usando este grupo.` });
         }
         
-        await pool.query('DELETE FROM grupos_opciones WHERE id = ?', [id]);
+        await pool.query('DELETE FROM grupo_opcion WHERE id = ?', [id]);
         res.json({ message: 'Grupo y sus opciones eliminados' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar el grupo', error });
@@ -76,7 +76,7 @@ router.post('/:grupo_id/opciones', async (req, res) => {
         const { grupo_id } = req.params;
         const { nombre, ajuste_precio } = req.body;
         const [result] = await pool.query(
-            'INSERT INTO opciones (grupo_opcion_id, nombre, ajuste_precio) VALUES (?, ?, ?)',
+            'INSERT INTO opcion (grupo_opcion_id, nombre, ajuste_precio) VALUES (?, ?, ?)',
             [grupo_id, nombre, ajuste_precio || 0]
         );
         res.status(201).json({ id: result.insertId, grupo_opcion_id: grupo_id, ...req.body });
@@ -91,7 +91,7 @@ router.put('/opciones/:opcion_id', async (req, res) => {
         const { opcion_id } = req.params;
         const { nombre, ajuste_precio } = req.body;
         await pool.query(
-            'UPDATE opciones SET nombre = ?, ajuste_precio = ? WHERE id = ?',
+            'UPDATE opcion SET nombre = ?, ajuste_precio = ? WHERE id = ?',
             [nombre, ajuste_precio, opcion_id]
         );
         res.json({ message: 'Opción actualizada' });
@@ -104,7 +104,7 @@ router.put('/opciones/:opcion_id', async (req, res) => {
 router.delete('/opciones/:opcion_id', async (req, res) => {
     try {
         const { opcion_id } = req.params;
-        await pool.query('DELETE FROM opciones WHERE id = ?', [opcion_id]);
+        await pool.query('DELETE FROM opcion WHERE id = ?', [opcion_id]);
         res.json({ message: 'Opción eliminada' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar la opción', error });

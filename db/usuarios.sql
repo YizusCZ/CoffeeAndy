@@ -1,7 +1,7 @@
 CREATE DATABASE auth_db;
 USE auth_db;
 
-CREATE TABLE usuarios (
+CREATE TABLE usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_completo VARCHAR(255) NOT NULL,
     correo VARCHAR(255) NOT NULL UNIQUE,
@@ -13,10 +13,11 @@ CREATE TABLE usuarios (
     INDEX(correo)
 );
 
-SELECT * FROM usuarios;
+SELECT * FROM usuario;
 
-TRUNCATE auth_db.usuarios;
+TRUNCATE auth_db.usuario;
 
-update usuarios set rol='admin' where id=1;
+update usuario set rol='admin' where id=1;
 
-delete from usuarios where id = 5;
+delete from usuario where id = 1;
+

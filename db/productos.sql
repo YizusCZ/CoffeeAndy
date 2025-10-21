@@ -1,18 +1,18 @@
 USE auth_db;
 
 
-CREATE TABLE IF NOT EXISTS categorias (
+CREATE TABLE IF NOT EXISTS categoria (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS productos (
+CREATE TABLE IF NOT EXISTS producto (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL, 
     stock INT DEFAULT 0,
     categoria_id INT,
-    FOREIGN KEY (categoria_id) REFERENCES categorias(id),
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id),
     imagen_url VARCHAR(255),
     activo BOOLEAN DEFAULT TRUE ,
     favorito BOOLEAN DEFAULT FALSE,
@@ -20,36 +20,36 @@ CREATE TABLE IF NOT EXISTS productos (
 );
 
 
-ALTER TABLE productos ADD especial BOOLEAN DEFAULT FALSE;
+ALTER TABLE producto ADD especial BOOLEAN DEFAULT FALSE;
 
-CREATE TABLE IF NOT EXISTS grupos_opciones (
+CREATE TABLE IF NOT EXISTS grupo_opcion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     tipo_seleccion ENUM('UNICO', 'MULTIPLE') NOT NULL DEFAULT 'UNICO',
     requerido BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS opciones (
+CREATE TABLE IF NOT EXISTS opcion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     grupo_opcion_id INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     ajuste_precio DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
-    FOREIGN KEY (grupo_opcion_id) REFERENCES grupos_opciones(id) ON DELETE CASCADE
+    FOREIGN KEY (grupo_opcion_id) REFERENCES grupo_opcion(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS productos_grupos_opciones (
+CREATE TABLE IF NOT EXISTS producto_grupo_opcion (
     producto_id INT NOT NULL,
     grupo_opcion_id INT NOT NULL,
     PRIMARY KEY (producto_id, grupo_opcion_id),
-    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE,
-    FOREIGN KEY (grupo_opcion_id) REFERENCES grupos_opciones(id) ON DELETE CASCADE
+    FOREIGN KEY (producto_id) REFERENCES producto(id) ON DELETE CASCADE,
+    FOREIGN KEY (grupo_opcion_id) REFERENCES grupo_opcion(id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS pedidos (
+CREATE TABLE IF NOT EXISTS pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
     nombre_cliente VARCHAR(255) NULL,
     total DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     nota TEXT, 
@@ -63,16 +63,16 @@ CREATE TABLE IF NOT EXISTS carrito (
     producto_id INT NOT NULL,          
     cantidad INT NOT NULL DEFAULT 1,
     nota_cocina TEXT NULL,             
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (producto_id) REFERENCES producto(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS carrito_opciones (
+CREATE TABLE IF NOT EXISTS carrito_opcion (
     carrito_id INT NOT NULL, 
     opcion_id INT NOT NULL,  
     PRIMARY KEY (carrito_id, opcion_id),
     FOREIGN KEY (carrito_id) REFERENCES carrito(id) ON DELETE CASCADE,
-    FOREIGN KEY (opcion_id) REFERENCES opciones(id) ON DELETE CASCADE
+    FOREIGN KEY (opcion_id) REFERENCES opcion(id) ON DELETE CASCADE
 );
 
 
@@ -101,7 +101,7 @@ BEGIN
     INTO 
         v_producto_existe, v_stock_disponible
     FROM 
-        productos 
+        producto 
     WHERE 
         id = p_producto_id
     GROUP BY stock; 
@@ -175,9 +175,9 @@ BEGIN
     SELECT 
         p.id, p.nombre, p.precio AS precio_base, c.nombre AS categoria
     FROM 
-        productos p
+        producto p
     LEFT JOIN 
-        categorias c ON p.categoria_id = c.id
+        categoria c ON p.categoria_id = c.id
     WHERE 
         p.id = p_producto_id;
 
@@ -189,11 +189,11 @@ BEGIN
         o.nombre AS opcion,
         o.ajuste_precio
     FROM 
-        productos_grupos_opciones pgo
+        producto_grupo_opcion pgo
     JOIN 
-        grupos_opciones go ON pgo.grupo_opcion_id = go.id
+        grupo_opcion go ON pgo.grupo_opcion_id = go.id
     JOIN 
-        opciones o ON go.id = o.grupo_opcion_id
+        opcion o ON go.id = o.grupo_opcion_id
     WHERE 
         pgo.producto_id = p_producto_id
     ORDER BY
@@ -205,34 +205,34 @@ CALL sp_obtenerDetallesProducto(2);
 
 
 
-CREATE TABLE IF NOT EXISTS pedidos_items (
+CREATE TABLE IF NOT EXISTS pedido_item (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pedido_id INT NOT NULL,
     producto_id INT ,
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(10, 2) NOT NULL, 
     nota_cocina TEXT,
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
-    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE SET NULL 
+    FOREIGN KEY (pedido_id) REFERENCES pedido(id) ON DELETE CASCADE,
+    FOREIGN KEY (producto_id) REFERENCES producto(id) ON DELETE SET NULL 
 );
 
-CREATE TABLE IF NOT EXISTS pedidos_items_opciones (
+CREATE TABLE IF NOT EXISTS pedido_item_opcion (
     pedido_item_id INT NOT NULL,
     opcion_id INT,
     nombre_opcion VARCHAR(100), 
     ajuste_precio DECIMAL(10, 2),
     PRIMARY KEY (pedido_item_id, opcion_id),
-    FOREIGN KEY (pedido_item_id) REFERENCES pedidos_items(id) ON DELETE CASCADE,
-    FOREIGN KEY (opcion_id) REFERENCES opciones(id) ON DELETE CASCADE
+    FOREIGN KEY (pedido_item_id) REFERENCES pedido(id) ON DELETE CASCADE,
+    FOREIGN KEY (opcion_id) REFERENCES opcion(id) ON DELETE CASCADE
 );
 
 DELIMITER $$
 
 CREATE TRIGGER trg_reducirStockDespuesDeInsertar
-AFTER INSERT ON pedidos_items
+AFTER INSERT ON pedido_item
 FOR EACH ROW
 BEGIN
-    UPDATE productos
+    UPDATE producto
     SET stock = stock - NEW.cantidad
     WHERE id = NEW.producto_id;
 END$$
@@ -265,13 +265,13 @@ BEGIN
             END;
 
             -- 1. Actualizar el estado del pedido
-            UPDATE pedidos
+            UPDATE pedido
             SET estado = 'Cancelado'
             WHERE id = p_pedido_id;
 
             -- 2. Devolver el stock a la tabla de productos
-            UPDATE productos p
-            JOIN pedidos_items pi ON p.id = pi.producto_id
+            UPDATE producto p
+            JOIN pedido_item pi ON p.id = pi.producto_id
             SET p.stock = p.stock + pi.cantidad
             WHERE pi.pedido_id = p_pedido_id;
 
@@ -282,6 +282,7 @@ BEGIN
 END$$
 
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE sp_realizarPedido(
@@ -309,17 +310,17 @@ BEGIN
     DECLARE cur_carrito CURSOR FOR 
         SELECT c.id, c.producto_id, c.cantidad, c.nota_cocina, p.precio,
                COALESCE((SELECT SUM(o.ajuste_precio) 
-                FROM carrito_opciones co JOIN opciones o ON co.opcion_id = o.id 
+                FROM carrito_opcion co JOIN opcion o ON co.opcion_id = o.id 
                 WHERE co.carrito_id = c.id), 0) AS opciones_total_ajuste
         FROM carrito c
-        JOIN productos p ON c.producto_id = p.id
+        JOIN producto p ON c.producto_id = p.id
         WHERE c.usuario_id = p_usuario_id;
 
     -- Cursor para iterar sobre las opciones de UN item del carrito
     DECLARE cur_opciones CURSOR FOR
         SELECT co.opcion_id, o.nombre, o.ajuste_precio 
-        FROM carrito_opciones co 
-        JOIN opciones o ON co.opcion_id = o.id 
+        FROM carrito_opcion co 
+        JOIN opcion o ON co.opcion_id = o.id 
         WHERE co.carrito_id = v_carrito_id; -- Usamos el v_carrito_id del item actual
 
     -- Handler para saber cuándo terminan los cursores
@@ -341,7 +342,7 @@ BEGIN
     START TRANSACTION;
 
     -- 1. Obtener nombre del usuario
-    SELECT nombre_completo INTO v_nombre_cliente FROM usuarios WHERE id = p_usuario_id;
+    SELECT nombre_completo INTO v_nombre_cliente FROM usuario WHERE id = p_usuario_id;
 
     -- 2. Calcular el gran total (iterando con el cursor)
     OPEN cur_carrito;
@@ -357,7 +358,7 @@ BEGIN
     SET done = FALSE; -- Resetear 'done' para el siguiente cursor
 
     -- 3. Crear el Pedido
-    INSERT INTO pedidos (id_usuario, nombre_cliente, total, nota) 
+    INSERT INTO pedido (id_usuario, nombre_cliente, total, nota) 
     VALUES (p_usuario_id, v_nombre_cliente, v_gran_total, p_nota_general);
     SET v_nuevo_pedido_id = LAST_INSERT_ID();
 
@@ -373,12 +374,12 @@ BEGIN
         SET v_precio_unitario = v_precio_base + v_opciones_total_ajuste;
 
         -- Insertar el item en pedidos_items
-        INSERT INTO pedidos_items (pedido_id, producto_id, cantidad, precio_unitario, nota_cocina) 
+        INSERT INTO pedido_item (pedido_id, producto_id, cantidad, precio_unitario, nota_cocina) 
         VALUES (v_nuevo_pedido_id, v_producto_id, v_cantidad, v_precio_unitario, v_nota_cocina);
         SET v_nuevo_pedido_item_id = LAST_INSERT_ID();
 
         -- Actualizar el contador de ventas del producto
-        UPDATE productos SET venta = venta + v_cantidad WHERE id = v_producto_id;
+        UPDATE producto SET venta = venta + v_cantidad WHERE id = v_producto_id;
 
         -- Abrir cursor para las opciones de ESTE item
         OPEN cur_opciones;
@@ -388,7 +389,7 @@ BEGIN
                 LEAVE move_loop_options;
             END IF;
             -- Insertar la opción en pedidos_items_opciones
-            INSERT INTO pedidos_items_opciones (pedido_item_id, opcion_id, nombre_opcion, ajuste_precio) 
+            INSERT INTO pedido_item_opcion (pedido_item_id, opcion_id, nombre_opcion, ajuste_precio) 
             VALUES (v_nuevo_pedido_item_id, v_opcion_id, v_opcion_nombre, v_opcion_ajuste);
         END LOOP;
         CLOSE cur_opciones;
@@ -412,3 +413,4 @@ DELIMITER ;
 
 SELECT * FROM productos;
 
+SELECT * FROM carrito_opciones;

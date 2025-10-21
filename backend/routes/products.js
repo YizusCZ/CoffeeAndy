@@ -18,8 +18,8 @@ router.get('/', async (req, res) => {
     try {
         const [productos] = await pool.query(`
             SELECT p.*, c.nombre AS categoria_nombre 
-            FROM productos p
-            LEFT JOIN categorias c ON p.categoria_id = c.id
+            FROM producto p
+            LEFT JOIN categoria c ON p.categoria_id = c.id
             ORDER BY p.id DESC
         `);
         res.json(productos);
@@ -75,7 +75,7 @@ router.post('/', upload.single('imagen'), async (req, res) => {
         await connection.beginTransaction();
 
         const [result] = await connection.query(
-            'INSERT INTO productos (nombre, precio, categoria_id, imagen_url, stock) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO producto (nombre, precio, categoria_id, imagen_url, stock) VALUES (?, ?, ?, ?, ?)',
             [nombre, precio, categoria_id, imagen_url, stock || 0] 
         );
         const nuevoProductoId = result.insertId;
@@ -85,7 +85,7 @@ router.post('/', upload.single('imagen'), async (req, res) => {
             if (ids && ids.length > 0) {
                 const values = ids.map(grupo_id => [nuevoProductoId, grupo_id]);
                 await connection.query(
-                    'INSERT INTO productos_grupos_opciones (producto_id, grupo_opcion_id) VALUES ?',
+                    'INSERT INTO producto_grupo_opcion (producto_id, grupo_opcion_id) VALUES ?',
                     [values]
                 );
             }
@@ -107,7 +107,7 @@ router.put('/:id/toggle', async (req, res) => {
     try {
         const { id } = req.params;
         const { activo } = req.body;
-        await pool.query('UPDATE productos SET activo = ? WHERE id = ?', [activo, id]);
+        await pool.query('UPDATE producto SET activo = ? WHERE id = ?', [activo, id]);
         res.json({ message: 'Producto actualizado' });
     } catch (error) {
         res.status(500).json({ message: 'Error al actualizar producto', error });
@@ -125,18 +125,18 @@ router.put('/:id', upload.single('imagen'), async (req, res) => {
         await connection.beginTransaction();
 
         await connection.query(
-            'UPDATE productos SET nombre = ?, precio = ?, categoria_id = ?, stock = ? WHERE id = ?',
+            'UPDATE producto SET nombre = ?, precio = ?, categoria_id = ?, stock = ? WHERE id = ?',
             [nombre, precio, categoria_id, stock || 0, id]
         );
 
-        await connection.query('DELETE FROM productos_grupos_opciones WHERE producto_id = ?', [id]);
+        await connection.query('DELETE FROM producto_grupo_opcion WHERE producto_id = ?', [id]);
 
         if (grupos_opciones_ids) {
             const ids = JSON.parse(grupos_opciones_ids);
             if (ids && ids.length > 0) {
                 const values = ids.map(grupo_id => [id, grupo_id]);
                 await connection.query(
-                    'INSERT INTO productos_grupos_opciones (producto_id, grupo_opcion_id) VALUES ?',
+                    'INSERT INTO producto_grupo_opcion (producto_id, grupo_opcion_id) VALUES ?',
                     [values]
                 );
             }
@@ -156,7 +156,7 @@ router.put('/:id', upload.single('imagen'), async (req, res) => {
 // 6. Eliminar un producto
 router.delete('/:id', async (req, res) => {
     try {
-        await pool.query('DELETE FROM productos WHERE id = ?', [req.params.id]);
+        await pool.query('DELETE FROM producto WHERE id = ?', [req.params.id]);
         res.json({ message: 'Producto eliminado' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar producto', error });
@@ -174,7 +174,7 @@ router.put('/:id/toggle-especial', async (req, res) => {
             return res.status(400).json({ message: 'El valor de "especial" debe ser true o false.' });
         }
         
-        await pool.query('UPDATE productos SET especial = ? WHERE id = ?', [especial, id]);
+        await pool.query('UPDATE producto SET especial = ? WHERE id = ?', [especial, id]);
         res.json({ message: `Producto #${id} actualizado como especial: ${especial}` });
     } catch (error) {
         console.error("Error al cambiar estado 'especial':", error);

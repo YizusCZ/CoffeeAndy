@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto'); // Para el token de verificación (Node.js built-in)
 const multer = require('multer');
 const pool = require('../db'); // Conexión DB
-const sendVerificationEmail = require('../utils/email'); // Lo crearemos abajo
+const sendVerificationEmail = require('../utils/email'); 
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.post('/register', upload.single('foto'), async (req, res) => {
         const { nombre_completo, correo, password } = req.body;
         
         // Verificar si el correo ya existe
-        const [userExists] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);
+        const [userExists] = await pool.query('SELECT * FROM usuario WHERE correo = ?', [correo]);
         if (userExists.length > 0) {
             return res.status(400).json({ message: 'El correo ya está registrado.' });
         }
@@ -44,7 +44,7 @@ router.post('/register', upload.single('foto'), async (req, res) => {
 
         // Insertar usuario en la base de datos
         await pool.query(
-            'INSERT INTO usuarios (nombre_completo, correo, password_hash, foto_url, token_verificacion) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO usuario (nombre_completo, correo, password_hash, foto_url, token_verificacion) VALUES (?, ?, ?, ?, ?)',
             [nombre_completo, correo, password_hash, foto_url, token_verificacion]
         );
 
@@ -63,7 +63,7 @@ router.post('/register', upload.single('foto'), async (req, res) => {
 router.get('/verify-email/:token', async (req, res) => {
     try {
         const { token } = req.params;
-        const [user] = await pool.query('SELECT * FROM usuarios WHERE token_verificacion = ?', [token]);
+        const [user] = await pool.query('SELECT * FROM usuario WHERE token_verificacion = ?', [token]);
 
         if (user.length === 0) {
             return res.status(400).send('Token inválido o expirado.');
@@ -71,7 +71,7 @@ router.get('/verify-email/:token', async (req, res) => {
 
         // Marcar como verificado y limpiar el token
         await pool.query(
-            'UPDATE usuarios SET verificado = TRUE, token_verificacion = NULL WHERE id = ?',
+            'UPDATE usuario SET verificado = TRUE, token_verificacion = NULL WHERE id = ?',
             [user[0].id]
         );
         
@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
         const { correo, password } = req.body;
 
         // 1. Buscar al usuario
-        const [user] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);
+        const [user] = await pool.query('SELECT * FROM usuario WHERE correo = ?', [correo]);
         if (user.length === 0) {
             return res.status(400).json({ message: 'Credenciales inválidas.' });
         }
@@ -147,7 +147,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
         const userId = req.user.id; 
 
         const [user] = await pool.query(
-            'SELECT nombre_completo, foto_url, rol FROM usuarios WHERE id = ?',
+            'SELECT nombre_completo, foto_url, rol FROM usuario WHERE id = ?',
             [userId]
         );
 

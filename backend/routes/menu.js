@@ -11,8 +11,8 @@ router.get('/products', async (req, res) => {
     try {
         const [productos] = await pool.query(`
             SELECT p.*, c.nombre AS categoria_nombre 
-            FROM productos p
-            LEFT JOIN categorias c ON p.categoria_id = c.id
+            FROM producto p
+            LEFT JOIN categoria c ON p.categoria_id = c.id
             WHERE p.activo = TRUE  -- Solo los activos
             ORDER BY p.nombre ASC
         `);

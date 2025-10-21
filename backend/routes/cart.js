@@ -15,13 +15,13 @@ router.get('/', async (req, res) => {
             SELECT 
                 c.id AS carrito_id, p.nombre, p.imagen_url, c.cantidad, c.nota_cocina, p.precio AS precio_base,
                 (SELECT GROUP_CONCAT(o.nombre SEPARATOR ', ') 
-                 FROM carrito_opciones co JOIN opciones o ON co.opcion_id = o.id 
+                 FROM carrito_opcion co JOIN opcion o ON co.opcion_id = o.id 
                  WHERE co.carrito_id = c.id) AS opciones_nombres,
                 (SELECT SUM(o.ajuste_precio) 
-                 FROM carrito_opciones co JOIN opciones o ON co.opcion_id = o.id 
+                 FROM carrito_opcion co JOIN opcion o ON co.opcion_id = o.id 
                  WHERE co.carrito_id = c.id) AS opciones_total_ajuste
             FROM carrito c
-            JOIN productos p ON c.producto_id = p.id
+            JOIN producto p ON c.producto_id = p.id
             WHERE c.usuario_id = ?;
         `, [usuario_id]);
 
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
         if (opcion_ids && opcion_ids.length > 0) {
             const values = opcion_ids.map(opcion_id => [nuevo_carrito_id, opcion_id]);
             await connection.query(
-                'INSERT INTO carrito_opciones (carrito_id, opcion_id) VALUES ?',
+                'INSERT INTO carrito_opcion (carrito_id, opcion_id) VALUES ?',
                 [values]
             );
         }
@@ -134,7 +134,7 @@ router.get('/history', async (req, res) => {
         const usuario_id = req.user.id;
         // Lista de pedidos del usuario
         const [pedidos] = await pool.query(
-            'SELECT id, total, estado, fecha_pedido, nota FROM pedidos WHERE id_usuario = ? ORDER BY fecha_pedido DESC',
+            'SELECT id, total, estado, fecha_pedido, nota FROM pedido WHERE id_usuario = ? ORDER BY fecha_pedido DESC',
             [usuario_id]
         );
         res.json(pedidos);
@@ -153,7 +153,7 @@ router.get('/history/:id', async (req, res) => {
 
         // Verifica que el pedido exista y pertenezca al usuario
         const [pedido] = await pool.query(
-            'SELECT * FROM pedidos WHERE id = ? AND id_usuario = ?',
+            'SELECT * FROM pedido WHERE id = ? AND id_usuario = ?',
             [id, usuario_id]
         );
 
@@ -170,12 +170,12 @@ router.get('/history/:id', async (req, res) => {
                 pi.precio_unitario,
                 GROUP_CONCAT(pio.nombre_opcion SEPARATOR ', ') AS opciones_elegidas
             FROM 
-                pedidos_items pi
+                pedido_item pi
             -- Usar LEFT JOIN por si el producto fue borrado (producto_id es SET NULL)
             LEFT JOIN 
-                productos prod ON pi.producto_id = prod.id 
+                producto prod ON pi.producto_id = prod.id 
             LEFT JOIN 
-                pedidos_items_opciones pio ON pi.id = pio.pedido_item_id
+                pedido_item_opcion pio ON pi.id = pio.pedido_item_id
             WHERE 
                 pi.pedido_id = ?
             GROUP BY
