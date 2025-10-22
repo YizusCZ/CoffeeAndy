@@ -240,6 +240,7 @@ END$$
 DELIMITER ;
 
 
+
 DELIMITER $$
 
 CREATE PROCEDURE sp_cancelarPedido(
@@ -250,7 +251,7 @@ BEGIN
 
     -- Obtener el estado actual para no cancelar un pedido ya cancelado
     SELECT estado INTO v_estado_actual
-    FROM pedidos
+    FROM pedido
     WHERE id = p_pedido_id;
 
     IF v_estado_actual != 'Cancelado' THEN

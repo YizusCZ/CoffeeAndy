@@ -1,6 +1,8 @@
 // src/components/OptionsAdmin.jsx
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import NavbarAdmin from './NavbarAdmin.jsx'; 
+
 
 const styles = {
     container: { padding: '20px', fontFamily: 'Arial, sans-serif' },
@@ -135,6 +137,8 @@ function OptionsAdmin() {
     };
     
     return (
+    <div>
+     <NavbarAdmin />
         <div style={styles.container}>
             <h1 style={styles.title}>🔩 Administración de Opciones</h1>
             
@@ -214,6 +218,7 @@ function OptionsAdmin() {
                 </div>
             </div>
         </div>
+    </div>
     );
 }
 

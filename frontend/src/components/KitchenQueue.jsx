@@ -1,6 +1,7 @@
 // src/components/KitchenQueue.jsx
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import NavbarAdmin from './NavbarAdmin.jsx'; 
 
 
 const styles = {
@@ -130,6 +131,8 @@ function KitchenQueue() {
     if (loading && orders.length === 0) return <p>Cargando cola de pedidos...</p>;
 
     return (
+    <div>
+        <NavbarAdmin />
         <div style={styles.container}>
             <h1 style={styles.title}>Cola de Pedidos</h1>
             <div style={styles.columnsContainer}>
@@ -152,6 +155,7 @@ function KitchenQueue() {
                 </div>
             </div>
         </div>
+    </div>
     );
 }
 

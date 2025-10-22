@@ -18,8 +18,8 @@ function Login() {
       // Guardar el token en localStorage
       localStorage.setItem("token", response.data.token)
 
-      // Redirigir alperfil
-      navigate("/profile")
+      // Aquí ya le puse que fuera al menú :p
+      navigate("/menu")
     } catch (error) {
       setMensaje(error.response?.data?.message || "Error al iniciar sesión.")
     }

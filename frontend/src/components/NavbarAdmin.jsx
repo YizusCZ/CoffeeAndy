@@ -26,8 +26,9 @@ function NavbarAdmin() {
                 </Link>
 
                 <div className="hidden md:flex space-x-6 items-center">
-                    <Link to="/admin/products" className="hover:text-gray-300 transition-colors duration-200">Productos</Link>
+                    <Link to="/admin/products" className="hover:text-gray-300 transition-colors duration-200">Administrar Productos</Link>
                     <Link to="/admin/queue" className="hover:text-gray-300 transition-colors duration-200">Cola de pedidos</Link>
+                    <Link to="/admin/options" className="hover:text-gray-300 transition-colors duration-200">Opciones</Link>
 
 
                     {/* ICONO O IMAGEN DE PERFIL */}
@@ -81,10 +82,13 @@ function NavbarAdmin() {
             <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 right-0 bg-slate-700 shadow-lg z-20`}> 
                 <ul className="flex flex-col items-center space-y-4 p-4">
                     <li>
-                        <Link to="/admin/products" className="hover:text-gray-300 block transition-colors duration-200" onClick={toggleMobileMenu}>Menú</Link>
+                        <Link to="/admin/products" className="hover:text-gray-300 block transition-colors duration-200" onClick={toggleMobileMenu}>Administar Productos</Link>
                     </li>
                     <li>
-                        <Link to="/admin/queue" className="hover:text-gray-300 block transition-colors duration-200" onClick={toggleMobileMenu}>Historial</Link>
+                        <Link to="/admin/queue" className="hover:text-gray-300 block transition-colors duration-200" onClick={toggleMobileMenu}>Cola de pedidos</Link>
+                    </li>
+                    <li>
+                        <Link to="/admin/options" className="hover:text-gray-300 block transition-colors duration-200" onClick={toggleMobileMenu}>Opciones</Link>
                     </li>
                 </ul>
             </div>
