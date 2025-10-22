@@ -10,6 +10,7 @@ const productRoutes = require('./routes/products');
 const categoriaRoutes = require('./routes/categorias');   
 const kitchenRoutes = require('./routes/kitchen'); 
 const grupoOpcionRoutes = require('./routes/gruposOpciones');
+const menuGuestRoutes = require('./routes/menuInvitados');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,6 +27,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Rutas
 app.use("/api/auth", authRoutes);
 app.use('/api/menu', menuRoutes);
+app.use('/api/menu_guest', menuGuestRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categorias', categoriaRoutes);      

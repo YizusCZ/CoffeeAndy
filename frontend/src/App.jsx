@@ -15,10 +15,15 @@ import HistorialPedidos from './components/HistorialPedidos.jsx';
 import ProductsAdmin from './components/ProductsAdmin.jsx';
 import KitchenQueue from './components/KitchenQueue.jsx';
 import OptionsAdmin from './components/OptionsAdmin.jsx';
+import Invitado from './components/Invitado.jsx';
+
+// Ruta publica
+import PublicRoute from './components/PublicRoute.jsx';
 
 // Componentes con rutas protegidas
 import ProtectedRoute from './components/ProtectedRoute.jsx'; 
 import AdminRoute from './components/AdminRoute.jsx';
+
 
 function App() {
     return (
@@ -28,8 +33,9 @@ function App() {
                     <Routes>
                         {/* Rutas Públicas */}
                         <Route path="/" element={<Navigate to="/login" replace />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+                        <Route path="/invitado" element={<PublicRoute><Invitado /></PublicRoute>} />
                         
                         {/* Rutas de Usuario Normal */}
                         <Route 

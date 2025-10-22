@@ -2,6 +2,8 @@ import React from 'react';
 import { useCart } from '../context/CartContext'; 
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api'; 
+import Navbar from './Navbar.jsx'; 
+
 
 const styles = {
     container: { padding: '20px', maxWidth: '800px', margin: 'auto', fontFamily: 'Arial, sans-serif' },
@@ -47,6 +49,8 @@ function Carrito() {
     if (loading) return <p style={styles.container}>Cargando carrito...</p>;
 
     return (
+    <div>
+    <Navbar />
         <div style={styles.container}>
             <h1 style={styles.title}>🛒 Mi Carrito</h1>
             <div style={styles.links}>
@@ -94,6 +98,7 @@ function Carrito() {
                 </div>
             )}
         </div>
+    </div>
     );
 }
 

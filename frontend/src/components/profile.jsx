@@ -30,6 +30,7 @@ function Profile() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        setLoading(false);
         navigate('/login');
     };
 
