@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS pedido_item_opcion (
     nombre_opcion VARCHAR(100), 
     ajuste_precio DECIMAL(10, 2),
     PRIMARY KEY (pedido_item_id, opcion_id),
-    FOREIGN KEY (pedido_item_id) REFERENCES pedido(id) ON DELETE CASCADE,
+    FOREIGN KEY (pedido_item_id) REFERENCES pedido_item(id) ON DELETE CASCADE, -- AQUI SE ME PASO PONER BIEN EL NOMBRE DE LA TABLA A LA QUE HACIA REFERENCIA
     FOREIGN KEY (opcion_id) REFERENCES opcion(id) ON DELETE CASCADE
 );
 
