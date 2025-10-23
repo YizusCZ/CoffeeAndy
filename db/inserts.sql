@@ -68,3 +68,5 @@ INSERT INTO productos_grupos_opciones (producto_id, grupo_opcion_id) VALUES
 (12, 1),        -- Tacos
 (13, 4),        -- Ensalada
 (14, 5);        -- Bagette
+
+SELECT * FROM producto;
