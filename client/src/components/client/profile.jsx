@@ -1,14 +1,14 @@
 // src/components/Profile.jsx
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { backendUrl } from '../../context/AppContext';
 
 function Profile() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const backendUrl = 'http://localhost:3001';
 
     useEffect(() => {
         const fetchProfile = async () => {

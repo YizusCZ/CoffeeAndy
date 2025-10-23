@@ -1,7 +1,7 @@
 // src/components/ProductsAdmin.jsx
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
-import ProductModal from './ProductModal';
+import api from '../../services/api.js';
+import ProductModal from '../client/ProductModal.jsx';
 import NavbarAdmin from './NavbarAdmin.jsx'; 
 
 const styles = {

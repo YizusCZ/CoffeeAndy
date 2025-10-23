@@ -8,24 +8,26 @@ import CartProvider from './context/CartContext.jsx';
 // Componentes 
 import Login from './components/login.jsx';
 import Register from './components/register.jsx';
-import Profile from './components/profile.jsx';
+import Profile from './components/client/profile.jsx';
 import Menu from './components/Menu.jsx';
-import Carrito from './components/Carrito.jsx';
-import HistorialPedidos from './components/HistorialPedidos.jsx';
-import ProductsAdmin from './components/ProductsAdmin.jsx';
-import KitchenQueue from './components/KitchenQueue.jsx';
-import OptionsAdmin from './components/OptionsAdmin.jsx';
+import Carrito from './components/client/Carrito.jsx';
+import HistorialPedidos from './components/client/HistorialPedidos.jsx';
+import ProductsAdmin from './components/admin/ProductsAdmin.jsx';
+import KitchenQueue from './components/admin/KitchenQueue.jsx';
+import OptionsAdmin from './components/admin/OptionsAdmin.jsx';
 import Invitado from './components/Invitado.jsx';
 
 // Ruta publica
-import PublicRoute from './components/PublicRoute.jsx';
+import PublicRoute from './context/PublicRoute.jsx';
 
 // Componentes con rutas protegidas
-import ProtectedRoute from './components/ProtectedRoute.jsx'; 
-import AdminRoute from './components/AdminRoute.jsx';
+import ProtectedRoute from './context/ProtectedRoute.jsx'; 
+import AdminRoute from './components/admin/AdminRoute.jsx';
+import Footer from './components/Footer.jsx';
 
 
 function App() {
+
     return (
         <AuthProvider> 
             <CartProvider>
@@ -33,7 +35,7 @@ function App() {
                     <Routes>
                         {/* Rutas Públicas */}
                         <Route path="/" element={<Navigate to="/menu" replace />} />
-                        <Route path="/menu" element={<PublicRoute><Menu/></PublicRoute>}                         />
+                        <Route path="/menu" element={<PublicRoute><Menu/></PublicRoute>}/>
                         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
                         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
                         <Route path="/invitado" element={<PublicRoute><Invitado /></PublicRoute>} />
@@ -72,6 +74,7 @@ function App() {
                     </Routes>
                 </BrowserRouter>
             </CartProvider>
+                  {<Footer/>}
         </AuthProvider>
     );
 }

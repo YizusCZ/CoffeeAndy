@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx'; // Hook de auth
-
-const backendUrl = 'http://localhost:3001'; 
+import { useAuth } from '../../context/AuthContext.jsx'; // Hook de auth
+import { backendUrl } from '../../context/AppContext.jsx';
 
 function NavbarAdmin() {
     const navigate = useNavigate();
@@ -18,7 +17,7 @@ function NavbarAdmin() {
         : null; // null si no hay foto
 
     return (
-        <nav className="bg-slate-800 text-white p-4 shadow-md sticky top-0 z-50">
+        <nav className="bg-[#0e345b] text-white p-4 shadow-md sticky top-0 z-50">
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo */}
                 <Link to="/admin/products" className="text-xl font-bold hover:text-gray-300 transition-colors duration-200">

@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCart } from '../context/CartContext'; 
+import { useCart } from '../../context/CartContext.jsx'; 
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api'; 
-import Navbar from './Navbar.jsx'; 
+import api from '../../services/api.js'; 
+import Navbar from '../Navbar.jsx'; 
 
 
 const styles = {

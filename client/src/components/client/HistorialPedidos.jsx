@@ -1,8 +1,8 @@
 // src/components/HistorialPedidos.jsx
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import { Link } from 'react-router-dom';
-import Navbar from './Navbar.jsx'; 
+import Navbar from './../Navbar.jsx'; 
 
 const styles = {
     container: { padding: '20px', maxWidth: '800px', margin: 'auto' },

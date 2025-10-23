@@ -37,3 +37,13 @@ export const color = {
     ocre: '#8c6e39',
     azul: '#0e345b',
 }
+
+export const footerLinks = [
+  {
+    title: "Quick Links",
+    links: [
+      { text: "Menu", url: "/menu" },
+      { text: "Nosotros", url: "/nosotros" },
+    ],
+  },
+]
