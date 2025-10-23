@@ -2,21 +2,23 @@ import { useState } from "react"
 import api from "../services/api"
 import { useNavigate } from "react-router-dom"
 import { assets } from "../assets/assets.js"
+import { useAuth } from '../context/AuthContext.jsx';
 
 function Login() {
   const [correo, setCorreo] = useState("")
   const [password, setPassword] = useState("")
   const [mensaje, setMensaje] = useState("")
+  
   const navigate = useNavigate()
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setMensaje('');
     try {
-      const response = await api.post("/auth/login", { correo, password })
-
-      // Guardar el token en localStorage
-      localStorage.setItem("token", response.data.token)
-
+      await api.post('/auth/login', { correo, password });
+      await login();
+      
       // Aquí ya le puse que fuera al menú :p
       navigate("/menu")
     } catch (error) {

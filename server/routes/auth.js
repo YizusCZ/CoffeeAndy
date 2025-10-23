@@ -158,7 +158,14 @@ router.post('/login', async (req, res) => {
             expiresIn: '1h' 
         });
 
-        res.json({ token });
+        res.cookie('authToken', token, {
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax', 
+            maxAge: 60 * 60 * 1000 
+        });
+
+        res.json({ message: 'Login exitoso' });
 
     } catch (error) {
         res.status(500).json({ message: 'Error en el servidor' });
@@ -168,20 +175,30 @@ router.post('/login', async (req, res) => {
 // --- 4. Endpoint de Perfil  ---
 // Verificacion con el middleware
 const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Acceso denegado. No se proporcionó token.' });
+    const token = req.cookies.authToken;
+
+    if (!token) { 
+        return res.status(401).json({ message: 'Acceso denegado. No autenticado.' });
     }
 
     try {
-        const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; 
         next();
     } catch (error) {
+        res.clearCookie('authToken');
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Sesión expirada.' });
+        }
         res.status(401).json({ message: 'Token inválido.' });
     }
 };
+
+// --- 5. Endpoint de Logout ---
+router.post('/logout', (req, res) => {
+    res.clearCookie('authToken');
+    res.json({ message: 'Logout exitoso' });
+});
 
 // Ruta protegida que usa el middleware
 router.get('/profile', authMiddleware, async (req, res) => {

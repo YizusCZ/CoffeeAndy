@@ -1,22 +1,23 @@
 // backend/middleware/userAuth.js
 const jwt = require('jsonwebtoken');
 
+// Este middleware solo revisa si el token en la COOKIE es válido
 const userAuth = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Acceso denegado. No se proporcionó token.' });
+    const token = req.cookies.authToken;
+    if (!token) {
+        return res.status(401).json({ message: 'Acceso denegado. No autenticado.' });
     }
-
     try {
-        const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
         req.user = decoded; 
         next(); 
-
     } catch (error) {
-        // Token inválido o expirado
-        res.status(401).json({ message: 'Token inválido.' });
+        // Si el token es inválido o expirado, limpiar la cookie
+        res.clearCookie('authToken');
+        if (error.name === 'TokenExpiredError') {
+             return res.status(401).json({ message: 'Sesión expirada.' });
+        }
+        return res.status(401).json({ message: 'Token inválido.' });
     }
 };
 
