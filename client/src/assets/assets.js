@@ -7,6 +7,8 @@ import carrito from './carrito.png';
 import notificaciones from './carrito.png';
 import recibo from './recibo.png';
 import perfil from './perfil.png';
+import fondo from './fondo_registro.png';
+
 
 
 export const assets = {
@@ -19,6 +21,7 @@ export const assets = {
     notificaciones,
     recibo,
     perfil,
+    fondo,
 }
 
 export const categoria = {

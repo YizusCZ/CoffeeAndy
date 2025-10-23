@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import ProductViewModalGuest from './ProductViewModalGuest.jsx'; 
 import Navbar from './Navbar.jsx'; 
+import { backendUrl } from '../context/AppContext.jsx';
 
 
 const styles = {
@@ -29,8 +30,6 @@ function Invitado() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState(null);
 
-
-    const backendUrl = 'http://localhost:3001';
 
     // Cargar productos activos
     useEffect(() => {

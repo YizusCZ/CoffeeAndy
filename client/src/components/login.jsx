@@ -30,32 +30,37 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-10">
-        {/* Logos */}
-        <div className="flex items-center justify-between gap-4 mb-8 sm:mb-10">
-          <img
-            src={assets.escudo}
-            alt="Universidad de Guanajuato"
-            className="h-12 sm:h-14 md:h-16 w-auto object-contain"
-          />
-          <img
-            src={assets.logo_azul}
-            alt="Coffee Andy"
-            className="h-12 sm:h-14 md:h-16 w-auto object-contain"
-          />
+    <div
+      className="min-h-screen w-full bg-cover bg-center flex items-center justify-center"
+      style={{ backgroundImage: `url(${assets.fondo})` }}
+    >
+      <div className="bg-white/10 backdrop-blur-md border border-[#F5C827] rounded-xl shadow-2xl w-full max-w-md p-8 sm:p-10 text-white">
+        {/* Encabezado */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center items-center mb-4">
+            <img
+              src={assets.escudo}
+              alt="Universidad de Guanajuato"
+              className="h-16 w-auto mr-4"
+            />
+            <img
+              src={assets.logo_azul}
+              alt="Coffee Andy"
+              className="h-16 w-auto"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-[#F5C827] mb-2">
+            Inicio de sesión
+          </h1>
+          <p className="text-sm text-gray-200">
+            Ingresa tus datos para continuar
+          </p>
         </div>
 
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Bienvenid@</h1>
-          <p className="text-sm sm:text-base text-gray-600">Inicia sesión para continuar</p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm sm:text-base font-medium text-gray-900 mb-2">
+            <label htmlFor="email" className="block text-sm font-semibold mb-2 text-[#F5C827]">
               Correo
             </label>
             <input
@@ -64,13 +69,13 @@ function Login() {
               placeholder="Introduce tu correo..."
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
-              className="w-full px-4 py-3 sm:py-4 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-sm sm:text-base transition-all"
+              className="w-full px-4 py-3 rounded-md bg-white/20 border border-[#F5C827] placeholder-gray-200 text-white focus:outline-none focus:ring-2 focus:ring-[#F5C827]"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm sm:text-base font-medium text-gray-900 mb-2">
+            <label htmlFor="password" className="block text-sm font-semibold mb-2 text-[#F5C827]">
               Contraseña
             </label>
             <input
@@ -79,31 +84,35 @@ function Login() {
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 sm:py-4 bg-gray-800 text-white placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 text-sm sm:text-base transition-all"
+              className="w-full px-4 py-3 rounded-md bg-white/20 border border-[#F5C827] placeholder-gray-200 text-white focus:outline-none focus:ring-2 focus:ring-[#F5C827]"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 sm:py-4 rounded-lg transition-colors duration-200 text-sm sm:text-base mt-6"
+            className="w-full bg-[#F5C827] text-white font-semibold py-3 rounded-md hover:bg-[#755a2f] transition-colors duration-200"
           >
-            Iniciar Sesión
+            Acceder
           </button>
         </form>
 
-        {/* Error message */}
-        {mensaje && <p className="mt-4 text-sm sm:text-base text-red-600 text-center">{mensaje}</p>}
+        {/* Mensaje de error */}
+        {mensaje && (
+          <p className="mt-4 text-sm text-red-400 text-center">{mensaje}</p>
+        )}
 
-        {/* Register section */}
-        <div className="mt-8 sm:mt-10 text-center">
-          <p className="text-sm sm:text-base text-gray-600 mb-4">¿No tienes cuenta aún?</p>
+        {/* Registro */}
+        <div className="mt-8 text-center text-sm">
+          <p className="text-gray-200 mb-2">
+            ¿No tienes cuenta aún?
+          </p>
           <button
             type="button"
             onClick={handleNavigateToRegister}
-            className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 sm:py-4 rounded-lg transition-colors duration-200 text-sm sm:text-base"
+            className="w-full bg-[#154C7D] hover:bg-[#0a2847] text-[#F5C827] font-semibold py-3 rounded-md transition-colors duration-100"
           >
-            Registrate
+            Regístrate
           </button>
         </div>
       </div>
