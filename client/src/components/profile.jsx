@@ -1,64 +1,64 @@
 // src/components/Profile.jsx
-import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import React from 'react'; 
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx'; 
+import { backendUrl } from '../context/AppContext.jsx';
 
 function Profile() {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
 
-    const backendUrl = 'http://localhost:3001';
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await api.get('/auth/profile');
-                setUser(response.data);
-            } catch (error) {
-                // redireccion a login con token caducado
-                console.error("Error al cargar perfil", error);
-                localStorage.removeItem('token'); 
-                navigate('/login');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProfile();
-    }, [navigate]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setLoading(false);
-        navigate('/login');
+    const handleLogout = async () => {
+        await logout(); 
+        navigate('/login'); 
     };
 
     if (loading) {
-        return <p>Cargando perfil...</p>;
+        return (
+            <div>
+                <div className="p-5 text-center">Cargando perfil...</div>
+            </div>
+        );
     }
 
     if (!user) {
-        return <p>No se pudieron cargar los datos.</p>;
+         return (
+             <div>
+                <div className="p-5 text-center text-red-600">
+                    No se pudo cargar el perfil o no has iniciado sesión.
+                    <Link to="/login" className="text-blue-500 hover:underline ml-2">Iniciar sesión</Link>
+                </div>
+            </div>
+         );
     }
 
-    const fotoUrlCompleta = user.foto_url 
-        ? `${backendUrl}/${user.foto_url.replace(/\\/g, '/')}` 
-        : 'url_de_imagen_por_defecto.png'; 
+    const fotoUrlCompleta = user.foto_url
+        ? `${backendUrl}/${user.foto_url.replace(/\\/g, '/')}`
+        : '/default-avatar.png'; 
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
-            <div className="w-full max-w-md bg-white flex items-center justify-center rounded-2xl shadow-lg p-6 sm:p-8 md:p-10 flex flex-col">
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Perfil de Usuario</h1>
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+                <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center"> {/* Ajustado max-w-sm */}
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Perfil de Usuario</h1> {/* Ajustado tamaño y margen */}
 
-                <img class="rounded-sm w-36 h-36" src={fotoUrlCompleta} alt="Extra large avatar"/> 
+                    <img
+                        className="rounded-full w-32 h-32 object-cover border-4 border-gray-300 shadow-md mb-4" // Ajustado tamaño y borde
+                        src={fotoUrlCompleta}
+                        alt="Foto de perfil"
+                    />
 
-            <h2 className="text-1xl sm:text-2xl font-bold text-gray-500 mb-2">{user.nombre_completo}</h2>
-            <p className = "text-sm sm:text-base text-gray-600"><strong>Rol:</strong> {user.rol}</p>
-            
-            <button onClick={handleLogout} className='w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 sm:py-2 rounded-lg transition-colors duration-200 text-sm sm:text-base mt-4'>Cerrar Sesión</button>
-        </div>
-    </div>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-1">{user.nombre_completo}</h2>
+                    <p className="text-sm sm:text-base text-gray-500 mb-6"><strong>Rol:</strong> {user.rol}</p>
+
+                    {/* Botón de Logout */}
+                    <button
+                        onClick={handleLogout}
+                        className='w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 sm:py-3 rounded-lg transition-colors duration-200 text-sm sm:text-base' // Color rojo
+                    >
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
     );
 }
 

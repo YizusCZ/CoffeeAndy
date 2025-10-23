@@ -6,9 +6,9 @@ import { useAuth } from '../context/AuthContext';
 function PublicRoute({ children }) {
   const { token, loading } = useAuth();
 
-  // Verificando toke inicias
+  // Verificando token
   if (loading) {
-    return <div>Cargando...</div>; // O un spinner
+    return <div>Cargando...</div>;
   }
 
   // Si hay un usuario logueado redirige a /menu
